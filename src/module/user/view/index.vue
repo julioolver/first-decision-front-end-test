@@ -38,77 +38,12 @@
             >{{ dialogMode === "add" ? "Adicionar" : "Editar" }} Usuário</span
           >
         </v-card-title>
-        <v-form ref="form" v-model="valid" lazy-validation @submit.prevent>
-          <v-card-text>
-            <v-text-field
-              v-model="userController.user.name"
-              :rules="[(v) => !!v || 'Name é obrigatório']"
-              label="Nome"
-              required
-            />
-            <v-text-field
-              v-model="userController.user.email"
-              :rules="[
-                (v) => !!v || 'Email é obrigatório',
-                (v) => /.+@.+\..+/.test(v) || 'E-mail deve ser válido',
-              ]"
-              label="E-mail"
-              required
-            />
-            <v-btn
-              v-if="dialogMode === 'edit'"
-              color="primary"
-              @click="toggleChangePassword"
-              variant="outlined"
-              >Alterar senha</v-btn
-            >
-            <v-text-field
-              v-if="changePassword"
-              v-model="userController.user.current_password"
-              :rules="[(v) => !!v || 'Senha atual é obrigatória']"
-              label="Senha atual"
-              type="password"
-              required
-            ></v-text-field>
-            <v-text-field
-              v-if="dialogMode === 'add' || changePassword"
-              v-model="userController.user.password"
-              :rules="[
-                (v) => !!v || 'Senha é obrigatório',
-                (v) => v.length >= 6 || 'Senha deve ter no mínimo 6 caracteres',
-              ]"
-              label="Senha"
-              type="password"
-              required
-            ></v-text-field>
-            <v-text-field
-              v-if="dialogMode === 'add' || changePassword"
-              v-model="userController.user.password_confirmation"
-              :rules="[
-                (v) => !!v || 'Confirmação de senaha é obrigatória',
-                (v) =>
-                  v === userController.user.password || 'Senhas não conferem',
-              ]"
-              label="Confirmação de senha"
-              type="password"
-              required
-            ></v-text-field>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              color="green darken-1"
-              text
-              @click="saveUser"
-              variant="outlined"
-              type="submit"
-              >Salvar</v-btn
-            >
-            <v-btn color="red" text @click="closeDialog" variant="outlined"
-              >Cancelar</v-btn
-            >
-          </v-card-actions>
-        </v-form>
+        <user-form
+          :controller="userController"
+          :dialogMode="dialogMode"
+          @submit="saveUser"
+          @close="closeDialog"
+        />
       </v-card>
     </v-dialog>
     <v-snackbar
@@ -137,10 +72,10 @@ import { ref, onMounted } from "vue";
 import { UserController } from "../controller/userController"; // Certifique-se de que o caminho está correto
 import type { UserType as User } from "../types/UserType";
 import { User as UserModel } from "../model/User";
+import UserForm from "../components/userForm.vue";
 
 const userController = new UserController();
 const showDialog = ref(false);
-const valid = ref(false);
 const dialogMode = ref<"add" | "edit">("add");
 const changePassword = ref(false);
 
@@ -173,7 +108,7 @@ const toggleChangePassword = () => {
 };
 
 const saveUser = async () => {
-  if (valid.value) {
+  if (userController.valid) {
     if (dialogMode.value === "add") {
       await userController.createUser();
     } else {
