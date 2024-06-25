@@ -111,6 +111,24 @@
         </v-form>
       </v-card>
     </v-dialog>
+    <v-snackbar
+      :multi-line="true"
+      v-model="userController.snackbar.show"
+      timeout="4000"
+      :color="userController.snackbar.color"
+    >
+      <p v-html="userController.snackbar.text"></p>
+
+      <template v-slot:actions>
+        <v-btn
+          color="white"
+          variant="text"
+          @click="userController.snackbar.show = false"
+        >
+          Fechar
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -155,11 +173,20 @@ const toggleChangePassword = () => {
 };
 
 const saveUser = async () => {
-  
+  if (valid.value) {
+    if (dialogMode.value === "add") {
+      await userController.createUser();
+    } else {
+      await userController.updateUser();
+    }
+    await fetchUsers();
+    closeDialog();
+  }
 };
 
 const removeUser = async (user: User) => {
-  
+  await userController.deleteUser(user.id!);
+  await fetchUsers();
 };
 </script>
 
