@@ -4,7 +4,7 @@
  * Automatic routes for `./src/pages/*.vue`
  */
 
-import Index from '@/pages/index.vue'
+import Index from '@/module/user/view/index.vue'
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
 
