@@ -1,9 +1,10 @@
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import axios from '@/plugins/axios';
 import { UserType } from '../types/UserType';
 
 
 class UserController {
+  valid = ref(false);
   user = reactive<UserType>({
     id: null,
     name: '',

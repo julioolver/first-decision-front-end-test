@@ -103,10 +103,6 @@ const closeDialog = () => {
   showDialog.value = false;
 };
 
-const toggleChangePassword = () => {
-  changePassword.value = !changePassword.value;
-};
-
 const saveUser = async () => {
   if (userController.valid) {
     if (dialogMode.value === "add") {
