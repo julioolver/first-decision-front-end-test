@@ -31,7 +31,8 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="showDialog" max-width="500px">
+    {{ userController.showDialog }}
+    <v-dialog v-model="userController.showDialog.value" max-width="500px">
       <v-card>
         <v-card-title>
           <span class="headline"
@@ -42,7 +43,7 @@
           :controller="userController"
           :dialogMode="dialogMode"
           @submit="saveUser"
-          @close="closeDialog"
+          @close="userController.showDialog.value = false"
         />
       </v-card>
     </v-dialog>
@@ -69,13 +70,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { UserController } from "../controller/userController"; // Certifique-se de que o caminho está correto
+import { UserController } from "../controller/UserController";
 import type { UserType as User } from "../types/UserType";
 import { User as UserModel } from "../model/User";
 import UserForm from "../components/userForm.vue";
 
 const userController = new UserController();
-const showDialog = ref(false);
 const dialogMode = ref<"add" | "edit">("add");
 const changePassword = ref(false);
 
@@ -96,11 +96,9 @@ const openDialog = (mode: "add" | "edit", user: User = new UserModel()) => {
   userController.user.password_confirmation = "";
   userController.user.current_password = "";
   changePassword.value = false;
-  showDialog.value = true;
-};
 
-const closeDialog = () => {
-  showDialog.value = false;
+  userController.showDialog.value = true;
+  console.log(userController.showDialog);
 };
 
 const saveUser = async () => {
@@ -111,7 +109,6 @@ const saveUser = async () => {
       await userController.updateUser();
     }
     await fetchUsers();
-    closeDialog();
   }
 };
 
